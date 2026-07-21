@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -205,7 +206,7 @@ public class AntiCheatDetectModule extends Module {
     private void pruneBlockWindow(long now) {
         Iterator<BlockChange> iterator = blockEvents.iterator();
         while (iterator.hasNext()) {
-            BlockChange event = blockEvents.next();
+            BlockChange event = blockEvents.peekFirst();
             if (now - event.timestamp > BLOCK_BURST_WINDOW_MS) {
                 iterator.remove();
                 blockCounts.computeIfPresent(event.posKey, (ignored, count) -> count <= 1 ? null : count - 1);
