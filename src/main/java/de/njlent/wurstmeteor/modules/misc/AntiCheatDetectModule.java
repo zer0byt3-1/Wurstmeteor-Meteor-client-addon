@@ -187,10 +187,19 @@ public class AntiCheatDetectModule extends Module {
     }
 
     private void prune(long now) {
-        pruneBlockWindow(now);
-        while (!blockEntityPackets.isEmpty() && now - blockEntityPackets.peekFirst() > BE_BURST_WINDOW_MS) blockEntityPackets.removeFirst();
-        lastBlocks.entrySet().removeIf(entry -> now - entry.getValue().timestamp > BLOCK_HISTORY_TTL_MS);
-        cooldowns.entrySet().removeIf(entry -> now - entry.getValue() > 30000L);
+        try
+        {
+            pruneBlockWindow(now);
+            while (!blockEntityPackets.isEmpty() && now - blockEntityPackets.peekFirst() > BE_BURST_WINDOW_MS) blockEntityPackets.removeFirst();
+            lastBlocks.entrySet().removeIf(entry -> now - entry.getValue().timestamp > BLOCK_HISTORY_TTL_MS);
+            cooldowns.entrySet().removeIf(entry -> now - entry.getValue() > 30000L);
+        }
+        catch(java.util.ConcurrentModificationException e)
+        {
+            warning("Caught exception java.util.ConcurrentModificationException: Disable a anti-ESP Module while original developer make a fix.");
+            return;
+        }
+       
     }
 
     private void pruneBlockWindow(long now) {
