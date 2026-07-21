@@ -196,7 +196,7 @@ public class AntiCheatDetectModule extends Module {
         }
         catch(java.util.ConcurrentModificationException e)
         {
-            warning("Caught exception java.util.ConcurrentModificationException: Disable a anti-ESP Module while original developer make a fix.");
+            warning("Caught exception java.util.ConcurrentModificationException: Disable a anti-ESP Detect Module while original developer make a fix.");
             return;
         }
        
