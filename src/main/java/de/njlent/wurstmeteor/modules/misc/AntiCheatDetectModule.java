@@ -203,11 +203,23 @@ public class AntiCheatDetectModule extends Module {
     }
 
     private void pruneBlockWindow(long now) {
-        while (!blockEvents.isEmpty() && now - blockEvents.peekFirst().timestamp > BLOCK_BURST_WINDOW_MS) {
-            BlockChange event = blockEvents.removeFirst();
-            blockCounts.computeIfPresent(event.posKey, (ignored, count) -> count <= 1 ? null : count - 1);
+        Iterator<BlockChange> iterator = blockEvents.iterator();
+        while (iterator.hasNext()) {
+            BlockChange event = blockEvents.next();
+            if (now - event.timestamp > BLOCK_BURST_WINDOW_MS) {
+                iterator.remove();
+                blockCounts.computeIfPresent(event.posKey, (ignored, count) -> count <= 1 ? null : count - 1);
+            }
         }
     }
+
+    // private void pruneBlockWindow(long now) {
+    //     Iterator<BlockChange> iterator = blockEvents.iterator();
+    //     while (!blockEvents.isEmpty() && now - blockEvents.peekFirst().timestamp > BLOCK_BURST_WINDOW_MS) {
+    //         BlockChange event = blockEvents.removeFirst();
+    //         blockCounts.computeIfPresent(event.posKey, (ignored, count) -> count <= 1 ? null : count - 1);
+    //     }
+    // }
 
     private boolean isSuppressedTransition(String oldId, String newId) {
         if (oldId.equals(newId)) return true;
