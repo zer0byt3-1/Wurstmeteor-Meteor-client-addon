@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class AntiCheatDetectModule extends Module {
     private static final long BLOCK_BURST_WINDOW_MS = 2000L;
@@ -62,11 +64,11 @@ public class AntiCheatDetectModule extends Module {
         .build()
     );
 
-    private final ArrayDeque<BlockChange> blockEvents = new ArrayDeque<>();
+    private final ConcurrentLinkedDeque<BlockChange> blockEvents = new ConcurrentLinkedDeque<>();
     private final ArrayDeque<Long> blockEntityPackets = new ArrayDeque<>();
-    private final Map<Long, Integer> blockCounts = new HashMap<>();
-    private final Map<Long, Snapshot> lastBlocks = new HashMap<>();
-    private final Map<String, Long> cooldowns = new HashMap<>();
+    private final ConcurrentHashMap<Long, Integer> blockCounts = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, Snapshot> lastBlocks = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<>();
     private String announced;
 
     public AntiCheatDetectModule() {
@@ -202,25 +204,13 @@ public class AntiCheatDetectModule extends Module {
         }
        
     }
-
-    private void pruneBlockWindow(long now) {
-        Iterator<BlockChange> iterator = blockEvents.iterator();
-        while (iterator.hasNext()) {
-            BlockChange event = blockEvents.peekFirst();
-            if (now - event.timestamp > BLOCK_BURST_WINDOW_MS) {
-                iterator.remove();
-                blockCounts.computeIfPresent(event.posKey, (ignored, count) -> count <= 1 ? null : count - 1);
-            }
-        }
-    }
-
-    // private void pruneBlockWindow(long now) {
-    //     Iterator<BlockChange> iterator = blockEvents.iterator();
-    //     while (!blockEvents.isEmpty() && now - blockEvents.peekFirst().timestamp > BLOCK_BURST_WINDOW_MS) {
-    //         BlockChange event = blockEvents.removeFirst();
-    //         blockCounts.computeIfPresent(event.posKey, (ignored, count) -> count <= 1 ? null : count - 1);
-    //     }
-    // }
+    
+     private void pruneBlockWindow(long now) {
+         while (!blockEvents.isEmpty() && now - blockEvents.peekFirst().timestamp > BLOCK_BURST_WINDOW_MS) {
+             BlockChange event = blockEvents.removeFirst();
+             blockCounts.computeIfPresent(event.posKey, (_, count) -> count <= 1 ? null : count - 1);
+         }
+     }
 
     private boolean isSuppressedTransition(String oldId, String newId) {
         if (oldId.equals(newId)) return true;
