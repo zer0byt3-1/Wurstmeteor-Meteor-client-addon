@@ -3,10 +3,11 @@
   "id": "wurst-meteor-addon",
   "version": "${version}",
   "name": "Wurstmeteor Addon [Fork]",
-  "description": "Wurst-inspired modules for Meteor Client.",
+  "description": "Wurst-inspired modules for Meteor Client with some fixes.",
   "authors": [
     "Wurst-Imperium",
-    "njlent"
+    "njlent",
+	"zer0byt3."
   ],
   "contact": {
     "sources": "https://github.com/njlent/wurst-for-meteor-client-addon"
