@@ -1,6 +1,8 @@
 package de.njlent.wurstmeteor.modules.world.treebot.pathing;
 
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
@@ -187,7 +189,8 @@ public class TreeBotPathFinder {
         return false;
     }
 
-    protected boolean canBeSolid(BlockPos pos) {
+    @SuppressWarnings("deprecation")
+	protected boolean canBeSolid(BlockPos pos) {
         var state = mc.level.getBlockState(pos);
         Block block = state.getBlock();
 
@@ -196,7 +199,8 @@ public class TreeBotPathFinder {
             || (abilities.jesus() && (block == Blocks.WATER || block == Blocks.LAVA));
     }
 
-    private boolean canGoThrough(BlockPos pos) {
+    @SuppressWarnings("deprecation")
+	private boolean canGoThrough(BlockPos pos) {
         if (!mc.level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) return false;
 
         var state = mc.level.getBlockState(pos);

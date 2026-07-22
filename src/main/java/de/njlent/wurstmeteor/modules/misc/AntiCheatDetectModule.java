@@ -17,10 +17,7 @@ import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
